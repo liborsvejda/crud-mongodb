@@ -1,0 +1,9 @@
+{
+  "main": {
+    "corsOrigin": "localhost:8080"
+  },
+  "MongoDB": {
+    "url": "mongodb://localhost:27017/",
+    "database": "webapps"
+  }
+}
