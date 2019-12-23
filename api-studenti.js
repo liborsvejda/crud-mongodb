@@ -10,6 +10,7 @@ mongoClient.connect(cfg.url, { useNewUrlParser: true, useUnifiedTopology: true }
     dbo = db.db(cfg.database);
     dbo.createCollection(dbColl, function(err, res) {
         if (err) throw err;
+        dbo.collection(dbColl).createIndex( { jmeno: "text", prijmeni: "text" } ); //vytvori index pro fulltext
         console.log(`Collection ${dbColl} created!`);
     });
 });
@@ -57,7 +58,8 @@ exports.apiStudenti = function (req, res, resObj) {
         } else {
             query = {};
             if (req.parameters.jmeno) {
-                query.jmeno = {"$regex":`\\s*(${req.parameters.jmeno})`, $options: "i"};
+                //query.jmeno = {"$regex":`\\s*(${req.parameters.jmeno})`, $options: "i"};
+                query = `{ $text: { $search: "${req.parameters.jmeno}" } }`; //podle https://docs.mongodb.com/manual/text-search/
             }
             if (req.parameters.prijmeni) {
                 query.prijmeni = {"$regex":`\\s*(${req.parameters.prijmeni})`, $options: "i"};
