@@ -52,17 +52,17 @@ exports.apiStudenti = function (req, res, resObj) {
     } else if (req.pathname.endsWith("/search")) {
         let query;
         if (req.parameters.fulltext) {
-            query = { "$or": new Array() };
-            query.$or.push({"jmeno": {"$regex":`\\s*(${req.parameters.fulltext})`, $options: "i"}});
-            query.$or.push({"prijmeni": {"$regex":`\\s*(${req.parameters.fulltext})`, $options: "i"}});
+            query = { $or: new Array() };
+            query.$or.push({"jmeno": {$regex:`\\s*(${req.parameters.fulltext})`, $options: "i"}});
+            query.$or.push({"prijmeni": {$regex:`\\s*(${req.parameters.fulltext})`, $options: "i"}});
+            // query = `{ $text: { $search: { ${req.parameters.fulltext} } } }`; //podle https://docs.mongodb.com/manual/text-search/, ale nejak nefunguje :-(
         } else {
             query = {};
             if (req.parameters.jmeno) {
-                //query.jmeno = {"$regex":`\\s*(${req.parameters.jmeno})`, $options: "i"};
-                query = `{ $text: { $search: "${req.parameters.jmeno}" } }`; //podle https://docs.mongodb.com/manual/text-search/
+                query.jmeno = { $regex:`\\s*(${req.parameters.jmeno})`, $options: "i"};
             }
             if (req.parameters.prijmeni) {
-                query.prijmeni = {"$regex":`\\s*(${req.parameters.prijmeni})`, $options: "i"};
+                query.prijmeni = { $regex:`\\s*(${req.parameters.prijmeni})`, $options: "i"};
             }
         }
         list(req, res, resObj, query);
